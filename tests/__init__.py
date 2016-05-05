@@ -75,6 +75,7 @@ class MongoRestTestCase(unittest.TestCase):
         example.C.drop_collection()
         example.MethodTestDoc.drop_collection()
         example.DictDoc.drop_collection()
+        example.ReqTitlePost.drop_collection()
 
         # create user 1
         resp = self.app.post('/user/', data=json.dumps(self.user_1))
@@ -1175,6 +1176,60 @@ class MongoRestSchemaTestCase(unittest.TestCase):
 
         # test list
         self.assertRaises(ValueError, self.app.get, '/dict_doc/')
+
+    def test_rename_fields_create(self):
+        """
+        Make sure we can create objects by posting a renamed field consistent
+        with Resource#rename_fields.
+        """
+        resp = self.app.post('/title_post/', data=json.dumps({ 'title': 'title' }))
+        response_success(resp)
+        self.assertEqual(example.ReqTitlePost.objects.first().title_str, 'title')
+
+    def test_rename_fields_get(self):
+        """
+        Make sure fetched objects contain a renamed field consistent with
+        Resource#rename_fields.
+        """
+        resp = self.app.post('/title_post/', data=json.dumps({ 'title': 'title' }))
+        response_success(resp)
+        post = json.loads(resp.data)
+
+        # list objects
+        resp = self.app.get('/title_post/')
+        response_success(resp)
+        self.assertEqual(json.loads(resp.data)['data'][0]['title'], 'title')
+
+        # fetch a single object
+        resp = self.app.get('/title_post/%s/' % post['id'])
+        response_success(resp)
+        self.assertEqual(json.loads(resp.data)['title'], 'title')
+
+    def test_rename_fields_error(self):
+        """
+        Make sure field errors for a renamed field are returned correctly.
+        """
+        # post with a missing required field
+        resp = self.app.post('/title_post/', data=json.dumps({
+            'title': None
+        }))
+        response_error(resp, code=400)
+        self.assertEqual(json.loads(resp.data), {
+            'field-errors': { 'title': 'Field is required' }
+        })
+
+        # create a valid object
+        resp = self.app.post('/title_post/', data=json.dumps({ 'title': 'title' }))
+        response_success(resp)
+
+        # update with a missing required field
+        resp = self.app.put('/title_post/%s/' % json.loads(resp.data)['id'], data=json.dumps({
+            'title': None
+        }))
+        response_error(resp, code=400)
+        self.assertEqual(json.loads(resp.data), {
+            'field-errors': { 'title': 'Field is required' }
+        })
 
 
 if __name__ == '__main__':
