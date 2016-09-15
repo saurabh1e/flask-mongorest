@@ -21,7 +21,7 @@ class MongoRest(object):
             # Construct a url based on a 'name' kwarg with a fallback to a Mongo document's name
             document_name = klass.resource.document.__name__.lower()
             name = kwargs.pop('name', document_name)
-            url = kwargs.pop('url', '/%s/' % klass.resource.document.__name__)
+            url = kwargs.pop('url', '/%s/' % to_underscore(klass.resource.document.__name__))
             endpoint = to_underscore(klass.__name__)
             # Insert the url prefix, if it exists
             if self.url_prefix:
