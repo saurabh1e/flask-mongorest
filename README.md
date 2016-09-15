@@ -1,5 +1,5 @@
-Flask-MongoRest [![Build Status](https://circleci.com/gh/closeio/flask-mongorest.png?branch=master&style=shield)](https://circleci.com/gh/closeio/flask-mongorest)
-===============
+Flask-MongoRest [![Build Status](https://circleci.com/gh/saurabh1e/flask-mongorest.png?branch=master&style=shield)](https://circleci.com/gh/saurabh1e/flask-mongorest)
+======================================================================================================================================================================
 A Restful API framework wrapped around MongoEngine.
 
 Setup
