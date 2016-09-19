@@ -5,15 +5,17 @@ import mongoengine
 from flask import request, render_template
 from werkzeug.exceptions import NotFound, Unauthorized
 
-from flask.ext.mongorest.exceptions import ValidationError
-from flask.ext.mongorest.utils import MongoEncoder
-from flask.ext.mongorest import methods
-from flask.ext.views.base import View
+from flask_mongorest.exceptions import ValidationError
+from flask_mongorest.utils import MongoEncoder
+from flask_mongorest import methods
+from flask_views.base import View
 
 mimerender = mimerender.FlaskMimeRender()
 
 render_json = lambda **payload: json.dumps(payload, allow_nan=False, cls=MongoEncoder)
-render_html = lambda **payload: render_template('mongorest/debug.html', data=json.dumps(payload, cls=MongoEncoder, sort_keys=True, indent=4))
+render_html = lambda **payload: render_template('mongorest/debug.html',
+                                                data=json.dumps(payload, cls=MongoEncoder, sort_keys=True, indent=4))
+
 
 def serialize_mongoengine_validation_error(e):
     def serialize_errors(errors):
@@ -27,13 +29,14 @@ def serialize_mongoengine_validation_error(e):
     else:
         return {'error': e.message}
 
+
 class ResourceView(View):
     resource = None
     methods = []
     authentication_methods = []
 
     def __init__(self):
-        assert(self.resource and self.methods)
+        assert (self.resource and self.methods)
 
     @mimerender(default='json', json=render_json, html=render_html)
     def dispatch_request(self, *args, **kwargs):
@@ -257,4 +260,3 @@ class ResourceView(View):
 
     def has_delete_permission(self, request, obj):
         return True
-

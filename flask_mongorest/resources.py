@@ -11,9 +11,9 @@ from mongoengine.fields import DictField
 from mongoengine.errors import ValidationError as MongoEngineValidationError
 
 from cleancat import ValidationError as SchemaValidationError
-from flask.ext.mongorest import methods
-from flask.ext.mongorest.exceptions import ValidationError, UnknownFieldError
-from flask.ext.mongorest.utils import cmp_fields, isbound, isint, equal
+from flask_mongorest import methods
+from flask_mongorest.exceptions import ValidationError, UnknownFieldError
+from flask_mongorest.utils import cmp_fields, isbound, isint, equal
 import collections
 
 
